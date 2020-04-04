@@ -29,6 +29,9 @@
 }
 
 + (BOOL)shouldStripReponseBodyWithResponse:(NSURLResponse*)response {
+  if ([response isKindOfClass:[NSHTTPURLResponse class]] == NO) {
+    return NO;
+  }
   NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
   NSString* contentType = httpResponse.allHeaderFields[@"content-type"];
   if (!contentType) {

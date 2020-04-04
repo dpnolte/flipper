@@ -78,9 +78,12 @@
 }
 
 - (void)didObserveResponse:(SKResponseInfo*)response {
-  NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response.response;
-
   NSMutableArray<NSDictionary<NSString*, id>*>* headers = [NSMutableArray new];
+  
+  if ([response isKindOfClass:[NSHTTPURLResponse class]] == YES) {
+
+  NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response.response;
+  
   for (NSString* key in [httpResponse.allHeaderFields allKeys]) {
     NSDictionary<NSString*, id>* header =
         @{@"key" : key, @"value" : httpResponse.allHeaderFields[key]};
@@ -100,6 +103,18 @@
         @"headers" : headers,
         @"data" : body ? body : [NSNull null]
       }];
+  } else {
+      NSString* body = response.body;
+
+      [self send:@"newResponse"
+          sonarObject:@{
+            @"id" : @(response.identifier),
+            @"timestamp" : @(response.timestamp),
+            @"headers" : headers,
+            @"data" : body ? body : [NSNull null]
+          }];
+  }
+    
 }
 
 @end
